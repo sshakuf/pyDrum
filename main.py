@@ -2,12 +2,16 @@ import pygame
 from pygame import mixer
 pygame.init()
 
+import server
+server.serverStart()
+
 WIDTH  = 1400
 HEIGHT = 800
 
 black = (0,0,0)
 white = (255,255,255)
 gray = (128,128,128)
+dark_gray = (50,50,50)
 green = (0,255,0)
 gold = (212, 175, 55)
 blue = (0,255,255)
@@ -18,10 +22,11 @@ screen = pygame.display.set_mode([WIDTH, HEIGHT])
 pygame.display.set_caption("Beat Maker")
 pygame.font.init()
 label_font = pygame.font.Font("Roboto-Bold.ttf",32)
+medium_font = pygame.font.Font("Roboto-Bold.ttf",24)
 
 fps = 60
 timer = pygame.time.Clock()
-beats = 8
+beats = 16
 instruments = [
     ['hi_hat', 'Hi Hat', 'sounds/hi hat.WAV'],
     ['snare', 'Snare', 'sounds/snare.WAV'],
@@ -77,6 +82,7 @@ def draw_grid(clicked, beat): #beat-the beat no that is now played
 
     return boxes
 
+
 def play_notes():
     for i in range(len(clicks)):
         if clicks[i][active_beat] != -1:
@@ -98,6 +104,17 @@ while run:
     screen.fill(black)
     boxes =  draw_grid(clicks, active_beat)
 
+    #lower menu buttons
+    play_pause = pygame.draw.rect(screen, gray, [50,HEIGHT - 150, 200, 100] ,0 ,5)
+    if playing:
+        play_text = label_font.render('Playing', True, green)
+    else:
+        play_text = label_font.render('Paused', True, dark_gray)
+    screen.blit(play_text, (80,HEIGHT - 120))
+
+
+
+
     if beat_changed:
         play_notes()
         beat_changed = False
@@ -111,7 +128,16 @@ while run:
                  if boxes[i][0].collidepoint(event.pos):
                      coords = boxes[i][1]
                      clicks[coords[1]][coords[0]] *= -1
-     
+        if event.type == pygame.MOUSEBUTTONUP:
+            if play_pause.collidepoint(event.pos):
+                if playing:
+                    playing = False
+                elif not playing:
+                    playing = True
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                playing = not playing
+
     # beat_length = (fps * 60) // bpm
     beat_length = 3600 // bpm
 
@@ -134,3 +160,4 @@ while run:
     pygame.display.flip()
 
 pygame.quit()
+serverStop()
