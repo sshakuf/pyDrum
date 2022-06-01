@@ -35,7 +35,7 @@ instruments = [
 boxes = []
 sounds = []
 num_instruments = len(instruments)
-clicks = [[-1 for _ in range(beats)] for _ in range(num_instruments)]
+clicks = [[0 for _ in range(beats)] for _ in range(num_instruments)]
 bpm = 240
 
 playing = True
@@ -61,7 +61,7 @@ def draw_grid(clicked, beat): #beat-the beat no that is now played
     for i in range(beats):
         for j in range(num_instruments):
             color = gray
-            if clicks[j][i] != -1:
+            if clicks[j][i] != 0:
                 color = green
             pygame.draw.rect(screen, color, 
                 [i*((WIDTH-200) // beats) + 200, (j*instrument_hieght), ((WIDTH-200) // beats), (HEIGHT-200) // num_instruments],0,3)
@@ -82,7 +82,7 @@ def draw_grid(clicked, beat): #beat-the beat no that is now played
 
 def play_notes():
     for i in range(len(clicks)):
-        if clicks[i][active_beat] != -1:
+        if clicks[i][active_beat] != 0:
            sounds[i].play() 
 
 
@@ -131,7 +131,11 @@ def drumRun():
                 for i in range(len(boxes)):
                     if boxes[i][0].collidepoint(event.pos):
                         coords = boxes[i][1]
-                        clicks[coords[1]][coords[0]] *= -1
+                        if clicks[coords[1]][coords[0]] == 0:
+                            clicks[coords[1]][coords[0]] = 1
+                        else:
+                            clicks[coords[1]][coords[0]] = 0
+
             if event.type == pygame.MOUSEBUTTONUP:
                 if play_pause.collidepoint(event.pos):
                     if playing:
@@ -173,4 +177,3 @@ def Play(is_playing):
     else:
         playing = False
 
-        
