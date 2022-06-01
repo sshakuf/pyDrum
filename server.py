@@ -1,6 +1,6 @@
 from flask import Flask
 import threading
-
+import drums
 
 host_name = "0.0.0.0"
 port = 23336
@@ -13,8 +13,8 @@ theServer = threading.Thread(target=lambda: app.run(host=host_name, port=port, d
 def hello_world():
     return "<p>Hello, World!</p>"
 
-def flaskThread():
-    app.run()
+# def flaskThread():
+#     app.run()
 
 def serverStop():
     theServer.stop()
@@ -22,3 +22,15 @@ def serverStop():
 
 def serverStart():
     theServer.start()
+
+
+@app.route("/start")
+def mixerStart():
+    drums.Play(True)
+    return "<p>Playing</p>"
+
+
+@app.route("/stop")
+def mixerStop():
+    drums.Play(False)
+    return "<p>Stopped</p>"
