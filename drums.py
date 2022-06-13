@@ -3,6 +3,7 @@ from pygame import mixer
 from common import *
 from SoundRect import SoundRect
 import pygame_widgets
+import AudioEffects
 
 pygame.init()
 
@@ -90,7 +91,10 @@ def ClickedEffect(soundRect):
 def play_notes():
     for i in range(len(clicks)):
         if clicks[i][active_beat] != 0:
-           sounds[i].play() 
+            if clicksEffects[i][active_beat] != 0:
+                soundsWithEffects[i].play() 
+            else:
+                sounds[i].play() 
 
 
 def loadSounds():
@@ -99,7 +103,15 @@ def loadSounds():
         sounds.append(mixer.Sound(ins[2]))
     return sounds
 
+def applayEffects(sounds):
+    effects = []
+    for s in sounds:
+        effects.append(AudioEffects.make_echo(s))
+    
+    return effects
 sounds = loadSounds()
+soundsWithEffects = applayEffects(sounds)
+
 pygame.mixer.set_num_channels(num_instruments * 3)
 
 def drumRun():

@@ -3,10 +3,12 @@ from numpy import zeros, int32, int16
 import time
 
 
-def make_echo(sound, samples_per_second, mydebug=True):
+def make_echo(sound, samples_per_second = None, mydebug=True):
     """returns a sound which is echoed of the last one."""
+    if samples_per_second is None:
+        samples_per_second = pg.mixer.get_init()[0]
 
-    echo_length = 3.5
+    echo_length = 10
 
     a1 = pg.sndarray.array(sound)
     if mydebug:
