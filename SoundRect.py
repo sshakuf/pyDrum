@@ -6,18 +6,12 @@ from pygame_widgets.button import Button
 from common import *
 from enum import Enum
 
-class SOUNDCOMMAND(Enum):
-    SOUND = 0
-    EFFECT1 = 1
-    EFFECT2 = 2
-
 class SoundRect:
 
-    def __init__(self, screen, index, rect, soundIndex, state = False, onClickedCallback = None, **kwargs):
-        # index - (j,i), rect -bounds for the button rect, soundIndex the sound to play, state - true/false
+    def __init__(self, screen, index, rect, state = False, onClickedCallback = None, **kwargs):
+        # index - (index, instrument) , rect -bounds for the button rect,  state - true/false
         self.index = index
         self.rect = rect
-        self.soundIndex = soundIndex
         self.state = False
         self.screen = screen
         self.onClickedCallback = onClickedCallback
@@ -43,12 +37,13 @@ class SoundRect:
             # text='Hello',  # Text to display
             # fontSize=50,  # Size of font
             # margin=20,  # Minimum distance between text/image and edge of button
-            inactiveColour=color,  # Colour of button when not being interacted with
-            hoverColour=hovercolor,  # Colour of button when being hovered over
+            # inactiveColour=color,  # Colour of button when not being interacted with
+            # hoverColour=hovercolor,  # Colour of button when being hovered over
             # pressedColour=(0, 200, 20),  # Colour of button when being clicked
-            radius=5,  # Radius of border corners (leave empty for not curved)
-            onClick=lambda: self.clickedSound()  # Function to call when clicked on
+            # radius=5,  # Radius of border corners (leave empty for not curved)
+            onClick=lambda: self.clickedSound(),  # Function to call when clicked on
             # onClick=lambda: print('Click')  # Function to call when clicked on
+            **kwargs
         )
 
     def update(self):
@@ -70,7 +65,7 @@ class SoundRect:
         # self.button.setPressedColour((0,0,0))
         print('clicked')
         if self.onClickedCallback != None:
-            self.onClickedCallback(self, SOUNDCOMMAND.SOUND)
+            self.onClickedCallback(self)
 
 
     
