@@ -106,11 +106,15 @@ def loadSounds():
 def applayEffects(sounds):
     effects = []
     for s in sounds:
-        effects.append(AudioEffects.make_echo(s))
-    
+        effects.append(AudioEffects.make_effects(s))
+        # effects.append(mixer.Sound(buffer= AudioEffects.make_effects(s)))
+        # effects.append(AudioEffects.make_echo(s))
+        
     return effects
 sounds = loadSounds()
 soundsWithEffects = applayEffects(sounds)
+
+print ("Sounds and effects loaded")
 
 pygame.mixer.set_num_channels(num_instruments * 3)
 

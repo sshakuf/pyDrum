@@ -1,6 +1,23 @@
 import pygame as pg
 from numpy import zeros, int32, int16
 import time
+from pedalboard import Pedalboard, Chorus, Reverb
+from pedalboard.io import AudioFile
+
+
+def make_effects(sound, samples_per_second = None):
+    if samples_per_second is None:
+        samples_per_second = pg.mixer.get_init()[0]
+
+    # Make a Pedalboard object, containing multiple plugins:
+    board = Pedalboard([Chorus(), Reverb(room_size=0.25)])
+
+    a1 = pg.sndarray.array(sound)
+    # Run the audio through this pedalboard!
+    effected = board(a1, samples_per_second)
+
+    sound2 = pg.sndarray.make_sound(effected.astype(int16))
+    return sound2
 
 
 def make_echo(sound, samples_per_second = None, mydebug=True):
