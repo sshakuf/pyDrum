@@ -1,31 +1,54 @@
 import pygame
-import pygame_gui
 
+import pygame_widgets
+from pygame_widgets.button import Button
+from pygame_widgets.slider import Slider
+from pygame_widgets.textbox import TextBox
 
+from SoundRect import SoundRect
+# Set up Pygame
 pygame.init()
+win = pygame.display.set_mode((600, 600))
 
-pygame.display.set_caption('Quick Start')
-window_surface = pygame.display.set_mode((800, 600))
+# Creates the button with optional parameters
+# button = Button(
+#     # Mandatory Parameters
+#     win,  # Surface to place button on
+#     100,  # X-coordinate of top left corner
+#     100,  # Y-coordinate of top left corner
+#     300,  # Width
+#     150,  # Height
 
-background = pygame.Surface((800, 600))
-background.fill(pygame.Color('#000000'))
+#     # Optional Parameters
+#     text='Hello',  # Text to display
+#     fontSize=50,  # Size of font
+#     margin=20,  # Minimum distance between text/image and edge of button
+#     inactiveColour=(200, 50, 0),  # Colour of button when not being interacted with
+#     hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+#     pressedColour=(0, 200, 20),  # Colour of button when being clicked
+#     radius=20,  # Radius of border corners (leave empty for not curved)
+#     onClick=lambda: print('Click')  # Function to call when clicked on
+# )
+button = SoundRect(win, (0,0), (100,100,100,100),0,0 )
 
-manager = pygame_gui.UIManager((800, 600))
+slider = Slider(win, 100, 300, 400, 40, min=0, max=99, step=1)
+output = TextBox(win, 275, 400, 50, 50, fontSize=30)
 
-clock = pygame.time.Clock()
-is_running = True
+output.disable()  # Act as label instead of textbox
 
-while is_running:
-    time_delta = clock.tick(60)/1000.0
-    for event in pygame.event.get():
+run = True
+while run:
+    events = pygame.event.get()
+    for event in events:
         if event.type == pygame.QUIT:
-            is_running = False
+            pygame.quit()
+            run = False
+            quit()
 
-        manager.process_events(event)
+    output.setText(slider.getValue())
 
-    manager.update(time_delta)
+    win.fill((255, 255, 255))
 
-    window_surface.blit(background, (0, 0))
-    manager.draw_ui(window_surface)
 
+    pygame_widgets.update(events)  # Call once every loop to allow widgets to render and listen
     pygame.display.update()

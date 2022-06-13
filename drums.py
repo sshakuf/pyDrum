@@ -1,55 +1,27 @@
 import pygame
 from pygame import mixer
+from common import *
+from SoundRect import SoundRect
+
 pygame.init()
-
-WIDTH  = 1400
-HEIGHT = 800
-
-black = (0,0,0)
-white = (255,255,255)
-gray = (128,128,128)
-dark_gray = (50,50,50)
-green = (0,255,0)
-gold = (212, 175, 55)
-blue = (0,255,255)
-
-
 
 screen = pygame.display.set_mode([WIDTH, HEIGHT])
 pygame.display.set_caption("Beat Maker")
 pygame.font.init()
-label_font = pygame.font.Font("Roboto-Bold.ttf",32)
-medium_font = pygame.font.Font("Roboto-Bold.ttf",24)
 
-fps = 60
-timer = pygame.time.Clock()
-beats = 16
-instruments = [
-    ['hi_hat', 'Hi Hat', 'sounds/hi hat.WAV'],
-    ['snare', 'Snare', 'sounds/snare.WAV'],
-    ['bass','Bass Drum', 'sounds/kick.WAV'],
-    ['crash','Crash', 'sounds/crash.WAV'],
-    ['clap','Clap', 'sounds/clap.WAV'],
-    ['tom','Floor Tom', 'sounds/tom.WAV'],
-]
-boxes = []
-sounds = []
-num_instruments = len(instruments)
-clicks = [[0 for _ in range(beats)] for _ in range(num_instruments)]
-bpm = 240
-
-playing = True
-active_length = 0
-active_beat = 0
-beat_changed = True
 
 def draw_grid(clicked, beat): #beat-the beat no that is now played
     left_box = pygame.draw.rect(screen, gray, [0,0,200,HEIGHT-200],5)
     bottom_box = pygame.draw.rect(screen, gray, [0, HEIGHT-200, WIDTH, 200], 5)
     boxes = []
+    boxesEffects = []
     colors = [gray, white, gray]
     y = 30
+
     instrument_hieght = (HEIGHT-200) // num_instruments
+    ins_width = (WIDTH-200) // beats
+    effct_height = instrument_hieght/4
+
     for ins in instruments:
         lbl_txt = label_font.render(ins[1], True, white)    
         screen.blit(lbl_txt,(30,y))
@@ -63,21 +35,29 @@ def draw_grid(clicked, beat): #beat-the beat no that is now played
             color = gray
             if clicks[j][i] != 0:
                 color = green
-            pygame.draw.rect(screen, color, 
-                [i*((WIDTH-200) // beats) + 200, (j*instrument_hieght), ((WIDTH-200) // beats), (HEIGHT-200) // num_instruments],0,3)
-            pygame.draw.rect(screen, gold, 
-                [i*((WIDTH-200) // beats) + 200, (j*instrument_hieght), ((WIDTH-200) // beats), (HEIGHT-200) // num_instruments],5,5)
-            rect = pygame.draw.rect(screen, black, 
-                [i*((WIDTH-200) // beats) + 200, (j*instrument_hieght), ((WIDTH-200) // beats), (HEIGHT-200) // num_instruments],2,5)
+            pos = [i*(ins_width) + 200, (j*instrument_hieght), (ins_width), instrument_hieght-effct_height]
+            pygame.draw.rect(screen, color, pos, 0, 3)
+            pygame.draw.rect(screen, gold, pos, 5, 5)
+            rect = pygame.draw.rect(screen, black, pos, 2, 5)
             boxes.append((rect, (i,j)))
 
+            color = gray
+            if clicksEffects[j][i] != 0:
+                color = green
+            pos = [i*(ins_width) + 200, (j*instrument_hieght)+instrument_hieght - effct_height, (ins_width), effct_height]
+            pygame.draw.rect(screen, color, pos, 0, 3)
+            pygame.draw.rect(screen, gold, pos, 5, 5)
+            effect = pygame.draw.rect(screen, black, pos, 2, 5)
+            boxesEffects.append((effect, (i,j)))
+
+
             active = pygame.draw.rect(screen, blue, 
-            [beat * ((WIDTH-200) // beats ) + 200 ,
+            [beat * (ins_width ) + 200 ,
              0,
-            ((WIDTH-200) // beats),
+            (ins_width),
              num_instruments * instrument_hieght],5,3)
 
-    return boxes
+    return (boxes, boxesEffects)
 
 
 def play_notes():
@@ -100,13 +80,14 @@ def drumRun():
     global playing
     global beat_changed
     global active_length
-
+    global boxes
+    global boxesEffects
 
     run=True
     while run:
         timer.tick(fps)
         screen.fill(black)
-        boxes =  draw_grid(clicks, active_beat)
+        boxes, boxesEffects =  draw_grid(clicks, active_beat)
 
         #lower menu buttons
         play_pause = pygame.draw.rect(screen, gray, [50,HEIGHT - 150, 200, 100] ,0 ,5)
@@ -135,6 +116,16 @@ def drumRun():
                             clicks[coords[1]][coords[0]] = 1
                         else:
                             clicks[coords[1]][coords[0]] = 0
+                        
+                    if boxesEffects[i][0].collidepoint(event.pos):
+                        coords = boxes[i][1]
+                        if clicksEffects[coords[1]][coords[0]] == 0:
+                            clicksEffects[coords[1]][coords[0]] = 1
+                        else:
+                            clicksEffects[coords[1]][coords[0]] = 0
+
+
+
 
             if event.type == pygame.MOUSEBUTTONUP:
                 if play_pause.collidepoint(event.pos):

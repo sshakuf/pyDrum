@@ -1,8 +1,10 @@
 import os.path
-from flask import Flask, Response
+from flask import Flask, Response, Request
 import threading
 import drums
 import json
+import os
+
 
 
 host_name = "0.0.0.0"
@@ -54,9 +56,9 @@ def get_resource(path):  # pragma: no cover
     return Response(content, mimetype=mimetype)
 
 
-def serverStop():
-    theServer.stop()
 
+def serverStop():
+    return "Shutting down..."
 
 def serverStart():
     theServer.start()
