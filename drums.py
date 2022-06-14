@@ -80,6 +80,7 @@ def ClickedSound(soundRect):
         clicks[coords[1]][coords[0]] = 1
     else:
         clicks[coords[1]][coords[0]] = 0
+    soundRect.state = clicks[coords[1]][coords[0]]
 
 def ClickedEffect(soundRect):
     coords = soundRect.index
@@ -87,6 +88,9 @@ def ClickedEffect(soundRect):
         clicksEffects[coords[1]][coords[0]] = 1
     else:
         clicksEffects[coords[1]][coords[0]] = 0
+
+    soundRect.state = clicksEffects[coords[1]][coords[0]]
+
 
 def play_notes():
     for i in range(len(clicks)):

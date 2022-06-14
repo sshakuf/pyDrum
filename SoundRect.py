@@ -59,13 +59,11 @@ class SoundRect:
         
 
     def clickedSound(self):
-        self.state = not self.state
-        self.update()
-        # self.button.setInactiveColour ((255,255,100))
-        # self.button.setPressedColour((0,0,0))
-        print('clicked')
+        #self.state = not self.state
         if self.onClickedCallback != None:
             self.onClickedCallback(self)
+        self.update()
+        
 
 
     
